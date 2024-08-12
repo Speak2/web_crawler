@@ -1,0 +1,2 @@
+
+db_url = "postgresql://username:password@localhost:port_address/database_name"
