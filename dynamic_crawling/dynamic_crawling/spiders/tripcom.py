@@ -34,10 +34,7 @@ class TripcomSpider(scrapy.Spider):
                     tag5_data = data.get('translate', {}).get('key.hotel.homepage.hotelrecommendation.hotostels')
                     
                     tag1_data = tag1_data.replace("%1$s", "%s")  # Replace %1$s with %s
-                    tag2_data = tag1_data.replace("%1$s", "%s")  # Replace %1$s with %s
-                    tag3_data = tag1_data.replace("%1$s", "%s")  # Replace %1$s with %s
-                    tag4_data = tag1_data.replace("%1$s", "%s")  # Replace %1$s with %s
-                    tag5_data = tag1_data.replace("%1$s", "%s")  # Replace %1$s with %s
+                    tag2_data = tag2_data.replace("%1$s", "%s")  # Replace %1$s with %s 
                     
                     
                     all_cities = []
