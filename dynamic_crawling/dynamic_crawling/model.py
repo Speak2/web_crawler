@@ -4,7 +4,6 @@ from sqlalchemy import Column, Integer, String, Float
 from sqlalchemy.dialects.postgresql import ARRAY
 from .config import db_url
 
-# db_url = "postgresql://postgres:admin@localhost:5432/scrapy_db"
 engine = create_engine(db_url)
 Base = declarative_base()
 
