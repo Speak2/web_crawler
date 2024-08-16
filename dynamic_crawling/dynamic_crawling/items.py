@@ -19,3 +19,4 @@ class PropertyItem(scrapy.Item):
     room_type = scrapy.Field()
     price = scrapy.Field()
     image_paths = scrapy.Field()
+    image_url = scrapy.Field()

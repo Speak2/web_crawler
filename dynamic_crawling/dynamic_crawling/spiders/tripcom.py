@@ -2,7 +2,6 @@ import scrapy
 import json
 import re
 import random
-import os
 from datetime import datetime, timedelta
 from ..items import PropertyItem
 
@@ -40,30 +39,30 @@ class TripcomSpider(scrapy.Spider):
                     all_cities = []
 
                     # Extract data from inboundCities
-                    uk='United Kingdom'
-                    inbound_cities = htls_data.get('inboundCities', [])
-                    for index, city in enumerate(inbound_cities):
-                        hotels = city.get('recommendHotels', [])
+                    # uk='United Kingdom'
+                    # inbound_cities = htls_data.get('inboundCities', [])
+                    # for index, city in enumerate(inbound_cities):
+                    #     hotels = city.get('recommendHotels', [])
 
-                        if hotels:  # Check if the list is not empty
-                            country_name = hotels[0].get('countryName')
-                        else:
-                            country_name = None  # Handle the case where `country` is empty
+                    #     if hotels:  # Check if the list is not empty
+                    #         country_name = hotels[0].get('countryName')
+                    #     else:
+                    #         country_name = None  # Handle the case where `country` is empty
 
-                        city_name = city.get('name')
-                        city_id = city.get('id')
+                    #     city_name = city.get('name')
+                    #     city_id = city.get('id')
 
-                        if index < 3:
-                            h3_tag = tag1_data % uk
-                        else:
-                            h3_tag = tag2_data % uk
+                    #     if index < 3:
+                    #         h3_tag = tag1_data % uk
+                    #     else:
+                    #         h3_tag = tag2_data % uk
 
-                        all_cities.append({
-                            'country': country_name,
-                            'city_name': city_name,
-                            'city_id': city_id,
-                            'h3_tag': h3_tag
-                        })
+                    #     all_cities.append({
+                    #         'country': country_name,
+                    #         'city_name': city_name,
+                    #         'city_id': city_id,
+                    #         'h3_tag': h3_tag
+                    #     })
 
                     # Extract data from outboundCities
                     world='Worldwide'
@@ -91,23 +90,23 @@ class TripcomSpider(scrapy.Spider):
                             'h3_tag': h3_tag
                         })
 
-                    all_cities.append({
-                        'city_name': "fiveStarHotels",
-                        'city_id': "-1",
-                        'h3_tag': tag3_data
-                    })
+                    # all_cities.append({
+                    #     'city_name': "fiveStarHotels",
+                    #     'city_id': "-1",
+                    #     'h3_tag': tag3_data
+                    # })
 
-                    all_cities.append({
-                        'city_name': "cheapHotels",
-                        'city_id': "-2",
-                        'h3_tag': tag4_data
-                    })
+                    # all_cities.append({
+                    #     'city_name': "cheapHotels",
+                    #     'city_id': "-2",
+                    #     'h3_tag': tag4_data
+                    # })
 
-                    all_cities.append({
-                        'city_name': "hostelHotels",
-                        'city_id': "-3",
-                        'h3_tag': tag5_data
-                    })
+                    # all_cities.append({
+                    #     'city_name': "hostelHotels",
+                    #     'city_id': "-3",
+                    #     'h3_tag': tag5_data
+                    # })
 
                     # Randomly select one city or the 3 types of hotels
                     random_city = random.choice(all_cities)
@@ -130,12 +129,12 @@ class TripcomSpider(scrapy.Spider):
                             longitude = city.get('lon')
                             city_name = city.get('cityName')
                             hotel_url = city.get('hotelJumpUrl')
-                            country_name = city.get('countryName')
+                            country_data = city.get('countryName')
 
                             item = PropertyItem(
                                 h3_tag=random_city['h3_tag'],
                                 title=hotel_name,
-                                country_name=country_name,
+                                country_name=country_data,
                                 city_name=city_name,
                                 star=hotel_star,
                                 rating=rating,
@@ -241,8 +240,7 @@ class TripcomSpider(scrapy.Spider):
                                 latitude=latitude,
                                 longitude=longitude,
                                 room_type=None,
-                                price=price,
-                                image_paths=''  # We'll update this in the save_image method
+                                price=price
                             )
 
                             yield scrapy.Request(
@@ -281,42 +279,8 @@ class TripcomSpider(scrapy.Spider):
             unique_room_type_names = list(set(room_type_names))
 
             item['room_type'] = list(set(unique_room_type_names))
+            item['image_url'] = link
 
-            yield scrapy.Request(
-                url=link,
-                callback=self.save_image,
-                meta={'item': item}
-            )
+            yield item
         except Exception as e:
             self.logger.error(f"Error in parse_hotel_detail: {str(e)}")
-
-    def save_image(self, response):
-        try:
-            # Extract hotel name from the response meta
-            item = response.meta['item']
-            hotel_name = item['title']
-
-            # Create a folder to save images if it doesn't exist
-            try:
-                if not os.path.exists('hotel_images'):
-                    os.makedirs('hotel_images')
-            except OSError as e:
-                self.logger.error(
-                    f"Failed to create directory 'hotel_images': {e}")
-                return  # Exit the function if we can't create the directory
-
-            image_path = f'hotel_images/{hotel_name}.jpg'
-            try:
-                with open(image_path, 'wb') as file:
-                    file.write(response.body)
-            except IOError as e:
-                self.logger.error(f"Failed to save image for {hotel_name}: {e}")
-                return  # Exit the function if we can't save the image
-
-            self.logger.info(f"Saved image for {hotel_name} at {image_path}")
-
-            item['image_paths'] = image_path
-            yield item
-
-        except Exception as e:
-            self.logger.error(f"Unexpected error in save_image for { hotel_name}: {e}")
