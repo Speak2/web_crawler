@@ -4,4 +4,4 @@ dynamic_crawling/dynamic_crawling/spiders/__pycache__/
 
 dynamic_crawling/dynamic_crawling/__pycache__/
 
-config.py
+dynamic_crawling/dynamic_crawling/config.py
