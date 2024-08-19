@@ -70,7 +70,7 @@ web_crawler/
 1. Clone the repository:
    ```bash
    git clone https://github.com/Speak2/web_crawler
-   cd <project-directory>
+   cd web_crawler/
    ```
 
 2. Create a virtual environment:
@@ -95,7 +95,7 @@ web_crawler/
    ```
 
 5. Connection with PostgreSQL database:
-   - Create a new `config.py` file using the `config-sample.txt`
+   - Create a new `config.py` file using the `config-sample.txt` inside- `web_crawler/dynamic_crawling/dynamic_crawling`
    - use appropriate username,password and port address to connect with the database.example-
      ```python
      db_url = "postgresql://username:password@localhost:port_number/database_name"
