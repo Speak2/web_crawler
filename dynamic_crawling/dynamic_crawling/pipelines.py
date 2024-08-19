@@ -54,7 +54,7 @@ class ScrapyProjectPipeline:
             if response.status_code == 200:
                 with open(image_path, 'wb') as file:
                     file.write(response.content)
-                return image_filename  # Return just the filename, not the full path
+                return image_path  # Return just the filename, not the full path
         except Exception as e:
             self.logger.error(f"Failed to save image for {hotel_name}: {e}")
 
