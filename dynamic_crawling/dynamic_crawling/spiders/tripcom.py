@@ -25,47 +25,53 @@ class TripcomSpider(scrapy.Spider):
                 try:
                     data = json.loads(json_data)
                     htls_data = data.get('initData', {}).get('htlsData', {})
-                    
-                    tag1_data = data.get('translate', {}).get('key.hotel.homepage.hotelrecommendation.hotdomestichotels')   #Popular Hotels in %1$s",
-                    tag2_data = data.get('translate', {}).get('key.hotel.homepage.hotelrecommendation.hotdomesticcities')
-                    tag3_data = data.get('translate', {}).get('key.hotel.homepage.hotelrecommendation.hot5starhotels')
-                    tag4_data = data.get('translate', {}).get('key.hotel.homepage.hotelrecommendation.hotcheaphotels')
-                    tag5_data = data.get('translate', {}).get('key.hotel.homepage.hotelrecommendation.hotostels')
-                    
-                    tag1_data = tag1_data.replace("%1$s", "%s")  # Replace %1$s with %s
-                    tag2_data = tag2_data.replace("%1$s", "%s")  # Replace %1$s with %s 
-                    
-                    
+
+                    tag1_data = data.get('translate', {}).get(
+                        'key.hotel.homepage.hotelrecommendation.hotdomestichotels')  # Popular Hotels in %1$s",
+                    tag2_data = data.get('translate', {}).get(
+                        'key.hotel.homepage.hotelrecommendation.hotdomesticcities')
+                    tag3_data = data.get('translate', {}).get(
+                        'key.hotel.homepage.hotelrecommendation.hot5starhotels')
+                    tag4_data = data.get('translate', {}).get(
+                        'key.hotel.homepage.hotelrecommendation.hotcheaphotels')
+                    tag5_data = data.get('translate', {}).get(
+                        'key.hotel.homepage.hotelrecommendation.hotostels')
+
+                    tag1_data = tag1_data.replace(
+                        "%1$s", "%s")  # Replace %1$s with %s
+                    tag2_data = tag2_data.replace(
+                        "%1$s", "%s")  # Replace %1$s with %s
+
                     all_cities = []
 
                     # Extract data from inboundCities
-                    # uk='United Kingdom'
-                    # inbound_cities = htls_data.get('inboundCities', [])
-                    # for index, city in enumerate(inbound_cities):
-                    #     hotels = city.get('recommendHotels', [])
+                    uk = 'United Kingdom'
+                    inbound_cities = htls_data.get('inboundCities', [])
+                    for index, city in enumerate(inbound_cities):
+                        hotels = city.get('recommendHotels', [])
 
-                    #     if hotels:  # Check if the list is not empty
-                    #         country_name = hotels[0].get('countryName')
-                    #     else:
-                    #         country_name = None  # Handle the case where `country` is empty
+                        if hotels:  # Check if the list is not empty
+                            country_name = hotels[0].get('countryName')
+                        else:
+                            country_name = None
 
-                    #     city_name = city.get('name')
-                    #     city_id = city.get('id')
+                        city_name = city.get('name')
+                        city_id = city.get('id')
 
-                    #     if index < 3:
-                    #         h3_tag = tag1_data % uk
-                    #     else:
-                    #         h3_tag = tag2_data % uk
+                        if index < 3:
+                            h3_tag = tag1_data % uk
+                        else:
+                            h3_tag = tag2_data % uk
 
-                    #     all_cities.append({
-                    #         'country': country_name,
-                    #         'city_name': city_name,
-                    #         'city_id': city_id,
-                    #         'h3_tag': h3_tag
-                    #     })
+                        all_cities.append({
+                            'country': country_name,
+                            'city_name': city_name,
+                            'city_id': city_id,
+                            'h3_tag': h3_tag
+                        })
 
                     # Extract data from outboundCities
-                    world='Worldwide'
+                    world = 'Worldwide'
                     outbound_cities = htls_data.get('outboundCities', [])
                     for index, city in enumerate(outbound_cities):
                         country = city.get('recommendHotels', [])
@@ -73,7 +79,7 @@ class TripcomSpider(scrapy.Spider):
                         if country:  # Check if the list is not empty
                             country_name = country[0].get('countryName')
                         else:
-                            country_name = None  # Handle the case where `country` is empty
+                            country_name = None
                         city_name = city.get('name')
                         city_id = city.get('id')
 
@@ -90,23 +96,23 @@ class TripcomSpider(scrapy.Spider):
                             'h3_tag': h3_tag
                         })
 
-                    # all_cities.append({
-                    #     'city_name': "fiveStarHotels",
-                    #     'city_id': "-1",
-                    #     'h3_tag': tag3_data
-                    # })
+                    all_cities.append({
+                        'city_name': "fiveStarHotels",
+                        'city_id': "-1",
+                        'h3_tag': tag3_data
+                    })
 
-                    # all_cities.append({
-                    #     'city_name': "cheapHotels",
-                    #     'city_id': "-2",
-                    #     'h3_tag': tag4_data
-                    # })
+                    all_cities.append({
+                        'city_name': "cheapHotels",
+                        'city_id': "-2",
+                        'h3_tag': tag4_data
+                    })
 
-                    # all_cities.append({
-                    #     'city_name': "hostelHotels",
-                    #     'city_id': "-3",
-                    #     'h3_tag': tag5_data
-                    # })
+                    all_cities.append({
+                        'city_name': "hostelHotels",
+                        'city_id': "-3",
+                        'h3_tag': tag5_data
+                    })
 
                     # Randomly select one city or the 3 types of hotels
                     random_city = random.choice(all_cities)
@@ -143,7 +149,7 @@ class TripcomSpider(scrapy.Spider):
                                 longitude=longitude,
                                 room_type=room_name,
                                 price=price,
-                                image_paths=''  # We'll update this in the save_image method
+                                image_paths=''
                             )
 
                             yield scrapy.Request(
@@ -200,8 +206,6 @@ class TripcomSpider(scrapy.Spider):
 
                 try:
                     data = json.loads(json_data)
-
-                    # Navigate to the firstPageList -> hotelList section in the JSON structure
                     first_page_list = data.get(
                         'initData', {}).get('firstPageList', [])
                     hotel_list = first_page_list.get('hotelList', [])
@@ -274,8 +278,6 @@ class TripcomSpider(scrapy.Spider):
 
             if not room_type_names:
                 self.logger.error("No roomTypeName found on the page")
-
-            # Remove duplicates by converting the list to a set and back to a list
             unique_room_type_names = list(set(room_type_names))
 
             item['room_type'] = list(set(unique_room_type_names))
