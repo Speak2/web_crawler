@@ -7,6 +7,7 @@ from .config import db_url
 engine = create_engine(db_url)
 Base = declarative_base()
 
+
 class Property(Base):
     __tablename__ = 'properties'
 
@@ -20,6 +21,6 @@ class Property(Base):
     location = Column(String)
     latitude = Column(Float)
     longitude = Column(Float)
-    room_type = Column(ARRAY(String)) 
+    room_type = Column(ARRAY(String))
     price = Column(Float)
     image_paths = Column(String)
